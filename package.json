@@ -1,0 +1,17 @@
+{
+  "name": "woke-stream-lister",
+  "version": "1.0.0",
+  "description": "Posts stream statuses to a daily thread on r/woke",
+  "main": "index.js",
+  "author": "Rob Danielson",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "snoowrap": "^1.21.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
