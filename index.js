@@ -63,7 +63,7 @@ async function needToUpdate(streams) {
 
 async function updateThread(threadContent) {
     console.log('updating thread')
-    await r.getSubmission(current.tid).edit(threadContent)
+    await r.getSubmission(current.tid).edit(threadContent).then(() => { console.log('thread updated') })
 }
 
 async function checkForThread(date) {
@@ -82,7 +82,6 @@ async function checkForThread(date) {
                 current.date = date
                 current.content = s.selftext
                 found = true
-                console.log('thread updated')
             }
         }
     })
