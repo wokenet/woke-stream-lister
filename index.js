@@ -33,18 +33,21 @@ async function run() {
     }).format(d)
 
     const streams = await getStreams()
-    const threadContent = await formatThread(prettyDate, streams)
-    const threadExists = await checkForThread(prettyDate)
 
-    if (!threadExists) {
-        console.log('no thread yet for today. creating one')
-        await createDailyThread(prettyDate, threadContent)
-        .then(() => {
-            current.streams = streams
-            console.log(`daily thread created for ${prettyDate}`)
-        })
-    } else if (await needToUpdate(streams)) {
-        await updateThread(threadContent)
+    if (streams !== false) {
+        const threadContent = await formatThread(prettyDate, streams)
+        const threadExists = await checkForThread(prettyDate)
+    
+        if (!threadExists) {
+            console.log('no thread yet for today. creating one')
+            await createDailyThread(prettyDate, threadContent)
+            .then(() => {
+                current.streams = streams
+                console.log(`daily thread created for ${prettyDate}`)
+            })
+        } else if (await needToUpdate(streams)) {
+            await updateThread(threadContent)
+        }
     }
 
     setTimeout(run, delayInMinutes*60000)
@@ -144,8 +147,17 @@ async function getStreams() {
     const mo = new Intl.DateTimeFormat('en-US', { month: '2-digit', timeZone: 'America/Los_Angeles' }).format(d)
     const da = new Intl.DateTimeFormat('en-US', { day: '2-digit', timeZone: 'America/Los_Angeles' }).format(d)
 
-    const recent = await axios.get(streamsListAPI)
-    const archived = await axios.get(`${streamsListAPI}?date=${ye}-${mo}-${da}`)
+    const recent = await axios.get(streamsListAPI).catch((err) => {
+        console.log(err)
+    })
+    const archived = await axios.get(`${streamsListAPI}?date=${ye}-${mo}-${da}`).catch((err) => {
+        console.log(err)
+    })
 
-    return {recent: recent.data, archived: archived.data}
+    try {
+        return {recent: recent.data, archived: archived.data}
+    } catch (err) {
+        console.log(err)
+        return false
+    }
 }
