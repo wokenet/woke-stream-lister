@@ -34,20 +34,24 @@ async function run() {
 
     const streams = await getStreams()
 
-    if (streams !== false) {
-        const threadContent = await formatThread(prettyDate, streams)
-        const threadExists = await checkForThread(prettyDate)
-    
-        if (!threadExists) {
-            console.log('no thread yet for today. creating one')
-            await createDailyThread(prettyDate, threadContent)
-            .then(() => {
-                current.streams = streams
-                console.log(`daily thread created for ${prettyDate}`)
-            })
-        } else if (await needToUpdate(streams)) {
-            await updateThread(threadContent)
+    try {
+        if (streams !== false) {
+            const threadContent = await formatThread(prettyDate, streams)
+            const threadExists = await checkForThread(prettyDate)
+        
+            if (!threadExists) {
+                console.log('no thread yet for today. creating one')
+                await createDailyThread(prettyDate, threadContent)
+                .then(() => {
+                    current.streams = streams
+                    console.log(`daily thread created for ${prettyDate}`)
+                })
+            } else if (await needToUpdate(streams)) {
+                await updateThread(threadContent)
+            }
         }
+    } catch (err) {
+        console.log(err)
     }
 
     setTimeout(run, delayInMinutes*60000)
