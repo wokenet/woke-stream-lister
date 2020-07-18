@@ -84,11 +84,13 @@ async function checkForThread(date) {
     // if bot was restarted midday, we don't want to overwrite the existing day's thread
     await r.getSubreddit(process.env.SUBREDDIT).getHot().then((submissions) => {
         for (let s of submissions.filter(sub => sub.stickied)) {
-            if (s.title === findTitle) {
+            console.log(s.author.name)
+            if (s.title === findTitle && s.author.name === process.env.REDDITUSER) {
                 current.tid = s.id
                 current.date = date
                 current.content = s.selftext
                 found = true
+                break
             }
         }
     })
