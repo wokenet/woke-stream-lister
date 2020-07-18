@@ -85,7 +85,7 @@ async function checkForThread(date) {
     await r.getSubreddit(process.env.SUBREDDIT).getHot().then((submissions) => {
         for (let s of submissions.filter(sub => sub.stickied)) {
             console.log(s.author.name)
-            if (s.title === findTitle && s.author.name === process.env.REDDITUSER) {
+            if (s.title === findTitle && s.author.name.toLowerCase() === process.env.REDDITUSER.toLowerCase()) {
                 current.tid = s.id
                 current.date = date
                 current.content = s.selftext
